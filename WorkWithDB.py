@@ -47,10 +47,12 @@ def make_id_from_date(date):
             id_for_sign = cor[2]
     return id_for_sign
 
+def get_sign():
+    date = '19.08'  # дата рождения в формате "день.месяц"
+    if check_date(date):
+        information = get_information(make_id_from_date(date_translator(date)))
+        print(information)
+    else:
+        print("Несуществующая дата")
 
-date = '27.12'  # дата рождения в формате "день.месяц"
-if check_date(date):
-    information = get_information(make_id_from_date(date_translator(date)))
-    print(information)
-else:
-    print("Несуществующая дата")
+get_sign()
