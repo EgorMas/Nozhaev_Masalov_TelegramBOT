@@ -1,6 +1,7 @@
 import telebot
 import requests
 from bs4 import BeautifulSoup
+from WorkWithDB import get_sign
 
 botTimeWeb = telebot.TeleBot('6837936001:AAHmFPBe6KcU_07bTD4Quhu4C_5F2hurEoQ')
 
@@ -28,7 +29,7 @@ def startBot(message):
     button_weather = types.InlineKeyboardButton(text='Прогноз погоды на сегодня', callback_data='weather')
     button_quote = types.InlineKeyboardButton(text='Цитата дня', callback_data='quote')
     button_horoscope = types.InlineKeyboardButton(text='Гороскоп', callback_data='horoscope')
-    button_dlya_egora = types.InlineKeyboardButton(text='Егорик', callback_data='egor')
+    button_dlya_egora = types.InlineKeyboardButton(text='Мой знак зодиака', callback_data='egor')
     markup.add(button_weather)
     markup.add(button_quote)
     markup.add(button_horoscope)
@@ -46,7 +47,7 @@ def response(function_call):
             botTimeWeb.send_message(function_call.message.chat.id, second_mess, reply_markup=markup)
             botTimeWeb.answer_callback_query(function_call.id)
         elif function_call.data == "quote":
-            second_mess = "Уинстон Черчилль : ледивадавдедвдаведвла"
+            second_mess = "Уинстон Черчилль : ледивадавдедвдаведвла2"
             markup = types.InlineKeyboardMarkup()
             markup.add(types.InlineKeyboardButton("Подробнее", url="https://en.wikiquote.org/wiki/Winston_Churchill"))
             botTimeWeb.send_message(function_call.message.chat.id, second_mess, reply_markup=markup)
@@ -58,10 +59,27 @@ def response(function_call):
             markup.add(types.InlineKeyboardButton("Купить", url="https://market.yandex.ru/"))
             botTimeWeb.send_message(function_call.message.chat.id, second_mess, reply_markup=markup)
             botTimeWeb.answer_callback_query(function_call.id)
+
         elif function_call.data == "egor":
-            second_mess = "В разработке!"
+            second_mess = "Введите свой день и месяц рождения в формате 'День.Месяц'. Без кавычек."
             botTimeWeb.send_message(function_call.message.chat.id, second_mess)
             botTimeWeb.answer_callback_query(function_call.id)
+
+        @botTimeWeb.message_handler(content_types=['text'])
+        def handle_text_message(message):
+            date = message.text
+            res = get_sign(date)
+            if res[1]:
+                third_mess = f'Русское название:        {res[0][0]}\nАнглийское название: {res[0][1]}\n' \
+                             f'Стихия знака:                 {res[0][3]}\nПокровитель:                 {res[0][4]}\n' \
+                             f'Даты влияния:               {res[0][2]}'
+                print(res[0])
+                botTimeWeb.send_message(message.chat.id, third_mess)
+                botTimeWeb.answer_callback_query(function_call.id)
+            else:
+                third_mess = res[0]
+                botTimeWeb.send_message(message.chat.id, third_mess)
+                botTimeWeb.answer_callback_query(function_call.id)
 
 
 print((get_data_horo('taurus'))[3:-4])

@@ -12,13 +12,21 @@ def date_translator(date):
 
 
 def check_date(date):
-    day, month = date.split('.')
-    year = '2024'  # високосный год, в котором есть 29.02
     try:
-        birth_date = datetime.datetime(int(year), int(month), int(day)).date()
-        return True
+        day, month = date.split('.')
+        try:
+            day = int(day)
+            month = int(month)
+            year = '2024'  # високосный год, в котором есть 29.02
+            try:
+                birth_date = datetime.datetime(int(year), month, day).date()
+                return True
+            except ValueError:
+                return "Несуществующая дата."
+        except ValueError:
+            return "Неправильный формат ввода дня или месяца. В них присутствует что-то кроме цифр."
     except ValueError:
-        return False
+        return "Несоответствующий формат ввода."
 
 
 def get_information(id_for_sign):
@@ -47,12 +55,11 @@ def make_id_from_date(date):
             id_for_sign = cor[2]
     return id_for_sign
 
-def get_sign():
-    date = '19.08'  # дата рождения в формате "день.месяц"
-    if check_date(date):
-        information = get_information(make_id_from_date(date_translator(date)))
-        print(information)
-    else:
-        print("Несуществующая дата")
 
-get_sign()
+def get_sign(date):  # дата рождения в формате "день.месяц"
+    result_of_chek = check_date(date)
+    if result_of_chek == True:
+        information = get_information(make_id_from_date(date_translator(date)))
+        return information, True
+    else:
+        return result_of_chek, False
