@@ -3,6 +3,22 @@ import os
 import datetime
 
 
+def get_eng_from_rus(sign):
+    znaki = {'овен': 'aries',
+             'телец': 'taurus',
+             'близнецы': 'gemini',
+             'рак': 'cancer',
+             'лев': 'leo',
+             'дева': 'virgo',
+             'весы': 'libra',
+             'скорпион': 'scorpio',
+             'стрелец': 'sagittarius',
+             'козерог': 'capricorn',
+             'водолей': 'aquarius',
+             'рыбы': 'pisces'}
+    return znaki[str(sign).lower()]
+
+
 def date_translator(date):
     day, month = date.split('.')
     new_date = month + day

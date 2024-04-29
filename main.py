@@ -3,24 +3,11 @@ import requests
 from transliterate import translit
 import random
 from bs4 import BeautifulSoup
-from WorkWithDB import get_sign
+from WorkWithDB import get_sign, get_eng_from_rus
 
 botTimeWeb = telebot.TeleBot('6837936001:AAHmFPBe6KcU_07bTD4Quhu4C_5F2hurEoQ')
 
 from telebot import types
-
-znaki = {'овен': 'aries',
-         'телец': 'taurus',
-         'близнецы': 'gemini',
-         'рак': 'cancer',
-         'лев': 'leo',
-         'дева': 'virgo',
-         'весы': 'libra',
-         'скорпион': 'scorpio',
-         'стрелец': 'sagittarius',
-         'козерог': 'capricorn',
-         'водолей': 'aquarius',
-         'рыбы': 'pisces'}
 
 KOSTIL = False
 KOSTIL2 = False
@@ -28,8 +15,7 @@ KOSTIL3 = False
 
 
 def get_data_horo(data):
-    global znaki
-    zodiac = znaki[data]
+    zodiac = get_eng_from_rus(data)
     st_accept = "text/html"
     st_useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 12_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15"
     headers = {
@@ -137,7 +123,8 @@ def response(function_call):
                                  f'Стихия знака:                 {res[0][3]}\nПокровитель:                 {res[0][4]}\n' \
                                  f'Даты влияния:               {res[0][2]}'
                     markup = types.InlineKeyboardMarkup()
-                    markup.add(types.InlineKeyboardButton("Подробнее:", url=f"https://horoscopes.rambler.ru/{res[0][1].lower()}/description/"))
+                    markup.add(types.InlineKeyboardButton("Подробнее:",
+                                                          url=f"https://horoscopes.rambler.ru/{res[0][1].lower()}/description/"))
                     botTimeWeb.send_message(message.chat.id, third_mess, reply_markup=markup)
                     botTimeWeb.answer_callback_query(function_call.id)
                     KOSTIL2 = False
@@ -150,7 +137,8 @@ def response(function_call):
                 data = date.lower()
                 second_mess = f"{get_data_horo(f'{data}')}"
                 markup = types.InlineKeyboardMarkup()
-                markup.add(types.InlineKeyboardButton("Подробнее:", url=f"https://goroskop365.ru/{znaki[data]}/"))
+                markup.add(
+                    types.InlineKeyboardButton("Подробнее:", url=f"https://goroskop365.ru/{get_eng_from_rus(data)}/"))
                 botTimeWeb.send_message(function_call.message.chat.id, second_mess, reply_markup=markup)
             elif KOSTIL3:
                 KOSTIL3 = False
