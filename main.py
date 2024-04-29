@@ -22,7 +22,6 @@ znaki = {'овен': 'aries',
          'водолей': 'aquarius',
          'рыбы': 'pisces'}
 
-
 KOSTIL = False
 KOSTIL2 = False
 KOSTIL3 = False
@@ -74,7 +73,7 @@ def get_data_weath(city):
     res = str(res).replace('>', '')
     res = str(res).replace('/', '')
     res = str(res).replace('class="icon icon_forecast icon_size_50 margin_bottom_10"', '')
-    res = str(res).replace('class="text text_block text_bold_normal text_fixed margin_bottom_10"','')
+    res = str(res).replace('class="text text_block text_bold_normal text_fixed margin_bottom_10"', '')
     res = str(res).replace('class="text text_block text_bold_medium margin_bottom_10"', '')
     res = str(res).replace('class="link link_block link_icon"', '')
     res = str(res).replace('class="text text_block text_bold_normal text_fixed margin_bottom_10"', '')
@@ -83,8 +82,8 @@ def get_data_weath(city):
     res = str(res).replace('class="text text_block text_light_normal text_fixed color_gray"', '')
     res = str(res).replace('class="link__text"', '')
     otvet = (str(res)[res.index('день'):res.index('вечер')].split(', ')[:5][2],
-            str(res)[res.index('день'):res.index('вечер')].split(', ')[:5][3],
-            str(res)[res.index('день'):res.index('вечер')].split(', ')[:5][4])
+             str(res)[res.index('день'):res.index('вечер')].split(', ')[:5][3],
+             str(res)[res.index('день'):res.index('вечер')].split(', ')[:5][4])
     return (otvet[0].strip(), otvet[1].replace('title=', '').strip()[1:], otvet[2][:otvet[2].index('"')])
 
 
@@ -132,15 +131,17 @@ def response(function_call):
             global KOSTIL, KOSTIL2, KOSTIL3
             date = message.text
             if KOSTIL2:
-                KOSTIL2 = False
                 res = get_sign(date)
                 if res[1]:
                     third_mess = f'Русское название:        {res[0][0]}\nАнглийское название: {res[0][1]}\n' \
                                  f'Стихия знака:                 {res[0][3]}\nПокровитель:                 {res[0][4]}\n' \
                                  f'Даты влияния:               {res[0][2]}'
                     print(res[0])
-                    botTimeWeb.send_message(message.chat.id, third_mess)
+                    markup = types.InlineKeyboardMarkup()
+                    markup.add(types.InlineKeyboardButton("Подробнее:", url=f"https://horoscopes.rambler.ru/{res[0][1].lower()}/description/"))
+                    botTimeWeb.send_message(message.chat.id, third_mess, reply_markup=markup)
                     botTimeWeb.answer_callback_query(function_call.id)
+                    KOSTIL2 = False
                 else:
                     third_mess = res[0]
                     botTimeWeb.send_message(message.chat.id, third_mess)
@@ -159,11 +160,11 @@ def response(function_call):
                 try:
                     second_mess = ', '.join(get_data_weath(f'{cit}'))
                     markup = types.InlineKeyboardMarkup()
-                    markup.add(types.InlineKeyboardButton("Подробнее:", url=f"https://pogoda.mail.ru/prognoz/{cit}/14dney//"))
+                    markup.add(
+                        types.InlineKeyboardButton("Подробнее:", url=f"https://pogoda.mail.ru/prognoz/{cit}/14dney/"))
                     botTimeWeb.send_message(function_call.message.chat.id, second_mess, reply_markup=markup)
                 except:
                     botTimeWeb.send_message(function_call.message.chat.id, 'Неполадки на сервере!')
 
 
-print(get_data_weath('langepas'))
 botTimeWeb.infinity_polling()
