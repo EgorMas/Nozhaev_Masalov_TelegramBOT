@@ -136,7 +136,6 @@ def response(function_call):
                     third_mess = f'Русское название:        {res[0][0]}\nАнглийское название: {res[0][1]}\n' \
                                  f'Стихия знака:                 {res[0][3]}\nПокровитель:                 {res[0][4]}\n' \
                                  f'Даты влияния:               {res[0][2]}'
-                    print(res[0])
                     markup = types.InlineKeyboardMarkup()
                     markup.add(types.InlineKeyboardButton("Подробнее:", url=f"https://horoscopes.rambler.ru/{res[0][1].lower()}/description/"))
                     botTimeWeb.send_message(message.chat.id, third_mess, reply_markup=markup)
